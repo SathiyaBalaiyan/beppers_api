@@ -1,0 +1,79 @@
+RewriteEngine On
+php_value date.timezone "Asia/Kolkata"
+RewriteRule ^users$ users.php?id=$1 [NC,N,QSA]
+RewriteRule ^users/([0-9]+)/?$ users.php?id=$1 [NC,L]
+RewriteRule ^users/login/?$ users.php [NC,L]
+RewriteRule ^users/update/?$ users.php [NC,L]
+RewriteRule ^categories$ users.php?type=categories [NC,N,QSA]
+RewriteRule ^categories/([0-9]+)/?$ users.php?id=$1&type=categories [NC,L]
+RewriteRule ^post$ post.php?type=post [NC,N,QSA]
+RewriteRule ^post/([0-9]+)/?$ post.php?type=post&id=$1 [NC,L]
+RewriteRule ^users/post?$ post.php?type=post [NC,L]
+RewriteRule ^follow$ users.php?type=follow [NC,N,QSA]
+RewriteRule ^unfollow$ users.php?type=unfollow [NC,N,QSA]
+RewriteRule ^comments$ post.php?type=comments [NC,N,QSA]
+RewriteRule ^like$ post.php?type=like [NC,N,QSA]
+RewriteRule ^unlike$ post.php?type=like [NC,N,QSA]
+RewriteRule ^followAccept$ users.php?type=followAccept [NC,N,QSA]
+RewriteRule ^ratecards$ post.php?type=ratecard [NC,N,QSA]
+RewriteRule ^shoptimings$ users.php?type=shoptimings [NC,N,QSA]
+RewriteRule ^deleteratecard$ post.php?type=deleteratecard [NC,N,QSA]
+RewriteRule ^rating$ post.php?type=rating [NC,N,QSA]
+RewriteRule ^users/search/?$ users.php [NC,L]
+RewriteRule ^post/search/?$ post.php?type=search [NC,L]
+RewriteRule ^post/filter/?$ post.php?type=filter [NC,L]
+RewriteRule ^users/followRequest/?$ users.php?type=followRequest [NC,L]
+RewriteRule ^users/followIgnore$ users.php?type=followIgnore [NC,N,QSA]
+RewriteRule ^users/block$ users.php?type=block [NC,N,QSA]
+RewriteRule ^users/getBlockList$ users.php?type=blockList [NC,N,QSA]
+RewriteRule ^users/getIgnoreList$ users.php?type=ignoreList [NC,N,QSA]
+RewriteRule ^users/contactdetails$ users.php?type=contactdetails [NC,N,QSA]
+RewriteRule ^privacy$ users.php?type=privacy [NC,N,QSA]
+RewriteRule ^users/reviews$ users.php?type=reviews
+RewriteRule ^users/blockComments$ users.php?type=blockComments
+RewriteRule ^users/filter/?$ users.php?type=filter
+RewriteRule ^users/fetchFollowing/?$ users.php?type=fetchFollowing
+RewriteRule ^post/hide/?$ post.php?type=hidePost
+RewriteRule ^users/unblock$ users.php?type=unblock [NC,N,QSA]
+RewriteRule ^users/unblockComments$ users.php?type=unblockComments
+RewriteRule ^users/blockedCommentsbyuser/?$ users.php?type=blockedCommentsbyuser
+RewriteRule ^post/deletepost$ post.php?type=deletepost
+RewriteRule ^insertnotification$ post.php [NC,N,QSA]
+RewriteRule ^getnotifyuser$ post.php?type=getnotifyuser [NC,N,QSA]
+RewriteRule ^notifyread$ post.php [NC,N,QSA]
+RewriteRule ^insertchat$ post.php [NC,N,QSA]
+RewriteRule ^getchatdetails$ post.php?type=getchatdetails [NC,N,QSA]
+RewriteRule ^chatseen$ post.php [NC,N,QSA]
+RewriteRule ^getlatestmesg$ post.php?type=getlatestmesg [NC,N,QSA]
+RewriteRule ^users/bookmarks/?$ users.php?type=bookmarks
+RewriteRule ^post/privacy$ post.php?type=privacy [NC,N,QSA]
+RewriteRule ^notifyswitch$ post.php?type=notifyswitch [NC,N,QSA]
+RewriteRule ^chatcount$ post.php?type=chatcount [NC,N,QSA]
+RewriteRule ^deactivate$ post.php?type=deactivate [NC,N,QSA]
+RewriteRule ^updatefirebaseuid$ users.php?type=updatefirebaseuid [NC,N,QSA]
+RewriteRule ^chatblock$ chat.php?type=chatblock[NC,N,QSA]
+RewriteRule ^chatunblock$ chat.php?type=chatunblock[NC,N,QSA]
+RewriteRule ^getchatblock$ chat.php?type=getchatblock [NC,N,QSA]
+RewriteRule ^chatblockprofile$ post.php?type=chatblockprofile [NC,N,QSA]
+RewriteRule ^users/changePassword$ users.php?type=changePassword [NC,N,QSA]
+RewriteRule ^deleteuser$ chat.php?type=deleteuser [NC,N,QSA]
+
+RewriteRule ^getpost$ post.php [NC,N,QSA]
+
+
+RewriteEngine On
+<Directory ~ “\apis”>
+Order allow,deny
+Deny from all
+</Directory>
+
+# directory browsing
+Options All -Indexes
+
+# Deny access to files with extensions .xls, .xlsx, .csv, .xlsm
+#<FilesMatch "\.(xls|xlsx|csv|xlsm)$">
+#Order allow,deny
+#Deny from all
+
+#</FilesMatch>
+
