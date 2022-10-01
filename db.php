@@ -3,7 +3,8 @@ include_once 'config.php';
 
 class Database extends Config {
   // Fetch all or a single user from database
-    public function fetch($id = 0, $follower_id = null) {
+    public function fetch($id = 0, $follower_id = null) 
+    {
         if ($follower_id != 0 && $id != 0) {
             $sql = 'SELECT  u.id,u.firebase_userid, u.user_name, u.name, u.mobile, u.email, u.password, u.dob, u.gender, u.address, u.type, u.categories, u.others, u.service, u.certificate_proof, u.no_of_posts, u.no_of_following, u.no_of_followers, u.profile_photo, u.created_at, f.active, f.follow_request  FROM users u inner join followers f  on f.user_id = u.id  and f.follower_id = :follower_id  and f.user_id = :id WHERE u.block="false" group by f.follower_id';
         } else if ($follower_id != 0) {
@@ -96,9 +97,26 @@ class Database extends Config {
             
         }
 
+    // To display homepage post
+    public function fetchhomepost($userid){
+            $sql = 'SELECT p.id, t.user_name as taguser, p.user_id, p.name, p.description, p.tag, p.gallery, p.no_of_comments, p.no_of_likes, l.active, u.user_name,u.address, u.profile_photo, u.type, b.active as bookmark_active from post p left join post_like l on l.post_id = p.id and l.user_id = :userid left join bookmarks b on b.post_id = p.id and b.user_id = :userid left join users u on u.id = p.user_id inner join followers f on p.user_id = f.user_id left join users t on p.tag = t.id WHERE f.follower_id = :userid and f.active = "1" and p.id not in (select post_id from hide_post where user_id = :userid)and p.user_id not in (select user_id from blocklist where blocker_id = :userid) and p.user_id not in (select blocker_id from blocklist where user_id = :userid) and u.block="false" and u.deactivate != "true"
+            UNION
+            (SELECT p.id, t.user_name as taguser, p.user_id, p.name, p.description, p.tag, p.gallery, p.no_of_comments, p.no_of_likes, l.active, u.user_name,u.address, u.profile_photo, u.type, b.active as bookmark_active from post p left join post_like l on l.post_id = p.id and l.user_id = :userid left join bookmarks b on b.post_id = p.id and b.user_id = :userid left join users u on u.id = p.user_id left join users t on p.tag = t.id WHERE p.id not in (select post_id from hide_post where user_id = :userid)and p.user_id not in (select user_id from blocklist where blocker_id = :userid) and p.user_id not in (select blocker_id from blocklist where user_id = :userid) and u.block="false" and u.deactivate != "true" ORDER BY no_of_likes DESC limit 15)
+            UNION
+            (SELECT p.id, t.user_name as taguser, p.user_id, p.name, p.description, p.tag, p.gallery, p.no_of_comments, p.no_of_likes, l.active, u.user_name,u.address, u.profile_photo, u.type, b.active as bookmark_active from post p left join post_like l on l.post_id = p.id and l.user_id = :userid left join bookmarks b on b.post_id = p.id and b.user_id = :userid left join users u on u.id = p.user_id left join users t on p.tag = t.id WHERE p.id not in (select post_id from hide_post where user_id = :userid)and p.user_id not in (select user_id from blocklist where blocker_id = :userid) and p.user_id not in (select blocker_id from blocklist where user_id = :userid) and u.block="false" and u.deactivate != "true" ORDER BY no_of_comments DESC limit 15)';
+    
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute(['userid' => $userid]);
+            $rows = $stmt->fetchAll();
+            return $rows;
+    
+    
+    }
+    
+
 
     public function fetchPost($id = null, $user_id = null, $userpost = false, $visitorid = null) {
-        $sql = 'SELECT p.id, t.user_name as taguser, p.user_id, p.name, p.description, p.tag, p.gallery, p.no_of_comments, p.no_of_likes, l.active, u.user_name,u.address, u.profile_photo, u.type, b.active as bookmark_active from post p left join post_like l on l.post_id = p.id and l.user_id = :user_id  left join bookmarks b on b.post_id = p.id and b.user_id = :user_id left join users u on u.id = p.user_id left join users t on p.tag = t.id where p.id != "" ';
+            $sql = 'SELECT p.id, t.user_name as taguser, p.user_id, p.name, p.description, p.tag, p.gallery, p.no_of_comments, p.no_of_likes, l.active, u.user_name,u.address, u.profile_photo, u.type, b.active as bookmark_active from post p left join post_like l on l.post_id = p.id and l.user_id = :user_id  left join bookmarks b on b.post_id = p.id and b.user_id = :user_id left join users u on u.id = p.user_id left join users t on p.tag = t.id where p.id != "" ';
         if ($id != null) {
           $sql .= ' WHERE p.id = :id  ';
         }
@@ -108,7 +126,7 @@ class Database extends Config {
             $sql .= ' WHERE p.user_id = :user_id ';
         }
         else if ($userpost) {
-          $sql = 'SELECT p.id, t.user_name as taguser, p.user_id, p.name as postname, p.description, p.tag, p.gallery, u.profile_photo, u.name, u.user_name, u.address, p.no_of_likes, p.no_of_comments, l.active, u.user_name, u.profile_photo, u.type, b.active as bookmark_active FROM post p inner join users u on u.id = p.user_id left join post_like l on l.post_id = p.id and l.user_id = :user_id left join bookmarks b on b.post_id = p.id and b.user_id = :user_id left join users t on p.tag = t.id';
+            $sql = 'SELECT p.id, t.user_name as taguser, p.user_id, p.name as postname, p.description, p.tag, p.gallery, u.profile_photo, u.name, u.user_name, u.address, p.no_of_likes, p.no_of_comments, l.active, u.user_name, u.profile_photo, u.type, b.active as bookmark_active FROM post p inner join users u on u.id = p.user_id left join post_like l on l.post_id = p.id and l.user_id = :user_id left join bookmarks b on b.post_id = p.id and b.user_id = :user_id left join users t on p.tag = t.id';
           
           $sql .= ' WHERE p.user_id = :user_id ';
         }
@@ -824,15 +842,14 @@ public function updatepost($user_id) {
        if ($area !== '') {
             $query .= ' and (u.address like "%'.$area.'%")';
        }
-
-//        if ($category !== '') {
-//         $query .= ' and (u.categories like "%'.$category.'%" )';
-//    }
-
        if ($category !== '') {
             $query .= ' and (p.name REGEXP "[[:<:]]('.$category.')[[:>:]]")';
        }
-	   
+
+    //    if ($category !== '') {
+    //         $query .= ' and (u.categories like "%'.$category.'%" )';
+    //    }
+
        $query .= ' and p.id not in (select post_id from hide_post where user_id = '.$user_id.') and p.user_id not in (select user_id from blocklist where blocker_id = '.$user_id.') and p.user_id not in (select blocker_id from blocklist where user_id = '.$user_id.') order by p.id desc';
 	   
         $stmt = $this->conn->query($query);
@@ -842,7 +859,6 @@ public function updatepost($user_id) {
 
     public function userFilter($city, $area, $category, $user_id)
     {
-
         $query = 'select * from users u where u.block = "false" and u.deactivate != "true" and type !=  "user" ';
         if ($city !== '') {
             $query .= ' and (address like "%'.$city.'%")';
@@ -853,8 +869,9 @@ public function updatepost($user_id) {
         }
 
         if ($category !== '') {
-            $query .= ' and (categories like "%'.$category.'%" )';
+            $query .= ' and (categories REGEXP "[[:<:]]('.$category.')[[:>:]]")';
         }
+        
         $query .= ' and id not in (select user_id from blocklist where blocker_id = '.$user_id.') and id not in (select blocker_id from blocklist where user_id = '.$user_id.') ';
        
         $query .= ' order by id desc';
@@ -871,6 +888,7 @@ public function updatepost($user_id) {
         return $rows;
     }  
 
+    
     public function insertBlocker($user_id, $blocker_id) {
         $created_at = date("Y-m-d H:i:s", time());
 

@@ -57,12 +57,12 @@ RewriteRule ^getchatblock$ chat.php?type=getchatblock [NC,N,QSA]
 RewriteRule ^chatblockprofile$ post.php?type=chatblockprofile [NC,N,QSA]
 RewriteRule ^users/changePassword$ users.php?type=changePassword [NC,N,QSA]
 RewriteRule ^deleteuser$ chat.php?type=deleteuser [NC,N,QSA]
+RewriteRule ^homepost$ users.php?type=homepost [NC,N,QSA]
 
 RewriteRule ^getpost$ post.php [NC,N,QSA]
 
-
 RewriteEngine On
-<Directory ~ “\apis”>
+<Directory ~ “\UAT”>
 Order allow,deny
 Deny from all
 </Directory>

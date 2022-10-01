@@ -65,7 +65,8 @@
         }
         echo $user->message('Follow Request details', false, $data);
 
-    } else if ($api == 'GET' && ($link == "reviews" || $type == "reviews")) {
+    } 
+    else if ($api == 'GET' && ($link == "reviews" || $type == "reviews")) {
         $user_id = ($headers['user_id'] ?? '');
         $data = [];
         if ($user_id != '') 
@@ -75,7 +76,8 @@
          $decode = $user->decodeArray($data);
         echo $user->message('Review details', false, $decode);
 
-    } else if ($api == 'GET' && ($link == "bookmarks" || $type == "bookmarks")) {
+    } 
+    else if ($api == 'GET' && ($link == "bookmarks" || $type == "bookmarks")) {
         $user_id = ($headers['user_id'] ?? '');
         $data = [];
         if ($user_id != '') {
@@ -123,7 +125,7 @@
     } else if ($api == 'GET' && ($link == "getIgnoreList" || $type == "ignorelist")) {
         $user_id = ($headers['user_id'] ?? '');
         $data = [];
-        if ($user_id != '') {
+        if ($user_id != ''){
             $data = $user->getIgnoreList($user_id);
         }
         echo $user->message('Ignore List details', false, $data);
@@ -138,7 +140,17 @@
          $decode = $user->decodeArray($data);
         echo $user->message('user details', false, $decode);
 
-    } else if ($api == 'GET' && $type == "fetchFollowing") {
+    }   //home page post display
+    else if ($api == 'GET' && $type == "homepost") {
+        $data = [];
+        $userid = ($headers['userid'] ?? '');
+        if ($userid != 0) {
+            $data = $user->fetchhomepost($userid);
+        }
+        //$decode = $user->decodeArray($data);
+        echo $user->message('post details', false, $data);
+    }
+else if ($api == 'GET' && $type == "fetchFollowing") {
         $data = [];
 
         if ($id != 0) {
@@ -168,6 +180,13 @@
         
        
     }
+
+  
+
+
+
+
+
     // Add a new user into database
     if ($api == 'POST' && $link == "login") {
         $user_name = $user->test_input($_POST['username']);
@@ -273,17 +292,19 @@
         } else {
             echo $user->message('Privacy request sent failed!', true);
         }
-    } else if ($api == 'POST' && $link == "reviews") { 
-        $user_id = $user->test_input($_POST['user_id']);
-        $review_user_id = $user->test_input($_POST['review_user_id']);
-        $reviews = $user->test_input($_POST['reviews']);
+    } 
+    // else if ($api == 'POST' && $link == "reviews") { 
+    //     $user_id = $user->test_input($_POST['user_id']);
+    //     $review_user_id = $user->test_input($_POST['review_user_id']);
+    //     $reviews = $user->test_input($_POST['reviews']);
 
-        if ($user->insertReviews($user_id, $review_user_id, $reviews)) {
-            echo $user->message('Reviews sent successfully!', false);
-        } else {
-            echo $user->message('Reviews sent failed!', true);
-        }
-    } else if ($api == 'POST' && $link == "contactdetails") { 
+    //     if ($user->insertReviews($user_id, $review_user_id, $reviews)) {
+    //         echo $user->message('Reviews sent successfully!', false);
+    //     } else {
+    //         echo $user->message('Reviews sent failed!', true);
+    //     }
+    // }
+     else if ($api == 'POST' && $link == "contactdetails") { 
         $name = $user->test_input($_POST['name']);
         $number = $user->test_input($_POST['number']);
         $email = $user->test_input($_POST['email']);

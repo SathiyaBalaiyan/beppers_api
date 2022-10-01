@@ -142,7 +142,8 @@
         }
         echo $user->message('post details', false, $data);
 
-    } else if ($api == 'GET' &&  $type == "filter") { 
+    } 
+    else if ($api == 'GET' &&  $type == "filter") { 
         $data = [];
         $city = ($headers['city'] ?? '');
         $area = ($headers['area'] ?? '');
