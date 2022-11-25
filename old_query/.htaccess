@@ -63,4 +63,19 @@ RewriteRule ^getpost$ post.php [NC,N,QSA]
 RewriteRule ^homepost$ post.php?type=homepost [NC,N,QSA]
 
 
+RewriteEngine On
+<Directory ~ “\apis”>
+Order allow,deny
+Deny from all
+</Directory>
+
+# directory browsing
+Options All -Indexes
+
+# Deny access to files with extensions .xls, .xlsx, .csv, .xlsm
+#<FilesMatch "\.(xls|xlsx|csv|xlsm)$">
+#Order allow,deny
+#Deny from all
+
+#</FilesMatch>
 

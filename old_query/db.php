@@ -103,8 +103,8 @@ class Database extends Config {
         left join bookmarks b on b.post_id = p.id and b.user_id = :user_id
         left join users u on u.id = p.user_id 
         left join users t on p.tag = t.id 
-        inner join followers f on f.follower_id = u.id
-        where p.id != "" and p.id not in (select post_id from hide_post where user_id = :user_id)and p.user_id  not in (select user_id from blocklist where blocker_id = :user_id) and p.user_id not in (select blocker_id from blocklist where user_id = :user_id) and u.block="false" and u.deactivate != "true" and f.active = "1" and f.follower_id = :user_id and f.user_id in (SELECT id from users where privacy = "1") or u.privacy = "0" group by p.id order by p.id desc';
+        inner join followers f on  f.follower_id = u.id
+        where p.id != "" and p.id not in (select post_id from hide_post where user_id = :user_id)and p.user_id  not in (select user_id from blocklist where blocker_id = :user_id) and p.user_id not in (select blocker_id from blocklist where user_id = :user_id) and u.block="false" and u.deactivate != "true" and f.follower_id = :user_id and f.user_id in (SELECT id from users where privacy = "1") or u.privacy = "0" group by p.id order by p.id desc';
         // $sql .= ' order by p.id desc';
         $stmt = $this->conn->prepare($sql);
         $stmt->execute(['user_id' => $user_id]);
@@ -840,13 +840,7 @@ public function updatepost($user_id) {
     
   public function postSearch($key, $user_id)
     {
-       $query = 'select p.id ,t.user_name as taguser, p.user_id, p.name, gallery, p.description, p.tag, p.no_of_comments, p.no_of_likes, p.created_at, u.user_name, u.profile_photo, u.type, l.active, b.active as bookmark_active from post p 
-       inner join users u on u.id = p.user_id 
-       left join post_like l on l.post_id = p.id and l.user_id = '.$user_id.' 
-       left join bookmarks b on b.post_id = p.id and b.user_id = '.$user_id.' 
-       left join users t on p.tag = t.id 
-       left join followers f on f.user_id = p.user_id
-       where u.block = "false" and f.active = "1" and f.follower_id = '.$user_id.' and f.user_id in (SELECT id from users where privacy = "1") or u.privacy = "0" and u.deactivate != "true" and (p.name like "%'.$key.'%" OR u.categories like "%'.$key.'%" or u.address like "%'.$key.'%" or p.description like "%'.$key.'%") and p.id not in (select post_id from hide_post where user_id = '.$user_id.')  and p.id not in (select post_id from hide_post where user_id = '.$user_id.') and p.user_id not in (select user_id from blocklist where blocker_id = '.$user_id.') and p.user_id not in (select blocker_id from blocklist where user_id = '.$user_id.') group by p.id order by p.id desc';
+       $query = 'select p.id ,t.user_name as taguser, p.user_id, p.name, gallery, p.description, p.tag, p.no_of_comments, p.no_of_likes, p.created_at, u.user_name, u.profile_photo, u.type, l.active, b.active as bookmark_active from post p inner join users u on u.id = p.user_id left join post_like l on l.post_id = p.id and l.user_id = '.$user_id.' left join bookmarks b on b.post_id = p.id and b.user_id = '.$user_id.' left join users t on p.tag = t.id where u.block = "false" and u.deactivate != "true" and p.id not in (select post_id from hide_post where user_id = '.$user_id.') and (p.name like "%'.$key.'%" OR u.categories like "%'.$key.'%" or u.address like "%'.$key.'%" or p.description like "%'.$key.'%")  and p.id not in (select post_id from hide_post where user_id = '.$user_id.') and p.user_id  not in (select user_id from blocklist where blocker_id = '.$user_id.') and p.user_id not in (select blocker_id from blocklist where user_id = '.$user_id.')';
 
         $stmt = $this->conn->query($query);
         $rows = $stmt->fetchAll();
@@ -855,13 +849,7 @@ public function updatepost($user_id) {
     public function postFilter($city, $area, $category, $user_id)
     {
 
-      $query = 'SELECT p.id, t.user_name as taguser, p.user_id, p.name, gallery, p.description, p.tag, p.no_of_comments, p.no_of_likes, p.created_at, u.user_name, u.profile_photo, u.type, l.active, b.active as bookmark_active from post p 
-      inner join users u on u.id = p.user_id 
-      left join post_like l on l.post_id = p.id and l.user_id = '.$user_id.' 
-      left join bookmarks b on b.post_id = p.id and b.user_id = '.$user_id.' 
-      left join users t on p.tag = t.id 
-      left join followers f on f.user_id = p.user_id 
-      WHERE u.block = "false" and f.active = "1" and f.follower_id = '.$user_id.' and f.user_id in (SELECT id from users where privacy = "1") or u.privacy = "0" and u.deactivate != "true" ';
+      $query = 'SELECT p.id,t.user_name as taguser, p.user_id, p.name, gallery, p.description, p.tag, p.no_of_comments, p.no_of_likes, p.created_at, u.user_name, u.profile_photo, u.type, l.active, b.active as bookmark_active from post p inner join users u left join post_like l on l.post_id = p.id and l.user_id = '.$user_id.' left join bookmarks b on b.post_id = p.id and b.user_id = '.$user_id.' left join users t on p.tag = t.id where u.block = "false" and u.deactivate != "true" and u.block = "false" and u.deactivate != "true" and u.id = p.user_id';
 	  
        if ($city !== '') {
             $query .= ' and (u.address like "%'.$city.'%")';
@@ -878,7 +866,7 @@ public function updatepost($user_id) {
             $query .= ' and (p.name REGEXP "[[:<:]]('.$category.')[[:>:]]")';
        }
 	   
-       $query .= ' and p.id not in (select post_id from hide_post where user_id = '.$user_id.') and p.user_id not in (select user_id from blocklist where blocker_id = '.$user_id.') and p.user_id not in (select blocker_id from blocklist where user_id = '.$user_id.') group by p.id order by p.id desc';
+       $query .= ' and p.id not in (select post_id from hide_post where user_id = '.$user_id.') and p.user_id not in (select user_id from blocklist where blocker_id = '.$user_id.') and p.user_id not in (select blocker_id from blocklist where user_id = '.$user_id.') order by p.id desc';
 	   
         $stmt = $this->conn->query($query);
         $rows = $stmt->fetchAll();

@@ -1,15 +1,10 @@
 <?php
 	class Config {
 	  // Database Details
-	//   private const DBHOST = 'localhost';
-	//   private const DBUSER = 'u762890487_beppers';
-	//   private const DBPASS = 'Beppers@123';
-	//   private const DBNAME = 'u762890487_beppers';
-
-	private const DBHOST = 'localhost';
-	  private const DBUSER = 'root';
-	  private const DBPASS = '';
-	  private const DBNAME = 'beppers';
+	  private const DBHOST = 'localhost';
+	  private const DBUSER = 'u762890487_beppers';
+	  private const DBPASS = 'Beppers@123';
+	  private const DBNAME = 'u762890487_beppers';
 	  // Data Source Network
 	  private $dsn = 'mysql:host=' . self::DBHOST . ';dbname=' . self::DBNAME . '';
 	  // conn variable
@@ -17,7 +12,8 @@
 
 	  // Constructor Function
 	  public function __construct() {
-	    try {
+	    try 
+		{
 	      $this->conn = new PDO($this->dsn, self::DBUSER, self::DBPASS);
 	      $this->conn->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 	    } catch (PDOException $e) {
@@ -36,7 +32,6 @@
 	  }
 	  
 	  public function decodeArray($data)
-
 	  {
 
 		  $d=array();
